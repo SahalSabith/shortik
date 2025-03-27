@@ -1,33 +1,36 @@
-from django.shortcuts import render,redirect
-import qrcode
-from io import BytesIO
-from django.http import HttpResponse
+from rest_framework.permissions import IsAuthenticated
+from  rest_framework.response import Response
+from  rest_framework.views import APIView
+from  rest_framework import status
 from django.conf import settings
+from io import BytesIO
+import qrcode
 import os
 
 # Create your views here.
-def generate_qr(request):
-    if request.method == "POST":
-        url = request.POST.get("url")
-        if url:
-            # Generate QR code
-            qr = qrcode.make(url)
-            buffer = BytesIO()
-            qr.save(buffer, format="PNG")
-            buffer.seek(0)
 
-            # Ensure the directory exists
-            qr_dir = os.path.join(settings.MEDIA_ROOT, "qr_codes")
-            if not os.path.exists(qr_dir):
-                os.makedirs(qr_dir)  # Create the directory if it doesn't exist
+class QrGeneratorView(APIView):
+    permission_classes = [IsAuthenticated]
 
-            # Save QR code image in media/qr_codes/
-            qr_filename = f"qr_{request.user.id}.png"
-            qr_path = os.path.join(qr_dir, qr_filename)
+    def post(self, request):
+        url = request.data.get("url")
+        
+        if not url:
+            return Response({"error": "URL is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-            with open(qr_path, "wb") as f:
-                f.write(buffer.getvalue())
+        qr = qrcode.make(url)
+        buffer = BytesIO()
+        qr.save(buffer, format="PNG")
+        buffer.seek(0)
 
-            return redirect("url", username=request.user.username)  # Redirect to url view
-    
-    return redirect("url")
+        qr_dir = os.path.join(settings.MEDIA_ROOT, "qr_codes")
+        if not os.path.exists(qr_dir):
+            os.makedirs(qr_dir)
+
+        qr_filename = f"qr_{request.user.id}.png"
+        qr_path = os.path.join(qr_dir, qr_filename)
+
+        with open(qr_path, "wb") as f:
+            f.write(buffer.getvalue())
+
+        return Response({"message": "QR Code generated successfully", "qr_url": f"/media/qr_codes/{qr_filename}"}, status=status.HTTP_201_CREATED)

@@ -1,0 +1,98 @@
+/* Specific styles for Expired URL Page */
+.expired-url-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, 
+        rgba(79, 70, 229, 0.1) 0%,
+        rgba(236, 72, 153, 0.1) 100%);
+}
+
+.expired-url-card {
+    background: var(--surface);
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    max-width: 500px;
+    width: 100%;
+    padding: 3rem;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.expired-url-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.12),
+                0 6px 8px -3px rgba(0, 0, 0, 0.07);
+}
+
+.expired-url-icon {
+    width: 96px;
+    height: 96px;
+    color: var(--secondary);
+    margin: 0 auto 1.5rem;
+}
+
+.expired-url-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 1rem;
+}
+
+.expired-url-message {
+    color: var(--text-light);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.expired-url-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.expired-url-btn {
+    display: inline-block;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 1rem;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.expired-url-btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.expired-url-btn-secondary {
+    background-color: var(--secondary);
+}
+
+.expired-url-btn-secondary:hover {
+    background-color: var(--secondary);
+    opacity: 0.9;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .expired-url-card {
+        margin: 1rem;
+        padding: 2rem 1.5rem;
+    }
+
+    .expired-url-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .expired-url-btn {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+}

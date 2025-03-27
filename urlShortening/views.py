@@ -1,40 +1,56 @@
-from django.shortcuts import render,HttpResponse,redirect,get_object_or_404
+from django.shortcuts import redirect,get_object_or_404
+from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .serializers import URLSerializer
+from django.conf import settings
+from rest_framework import status
 from .models import URL
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+import os
 from django.conf import settings
 
 # Create your views here.
-def home(request):
-    return render(request,"index.html")
+class UrlShortView(APIView):
+    permission_classes = [IsAuthenticated]
 
-def short_url(request):
-    if request.method == "POST":
-        username = request.user
-        url = request.POST.get("url")
-        generate = URL.objects.create(original_url = url,user=username)
-        generate.save()
-        return redirect("url",username)
-    return redirect("home")
+    def post(self,request):
+        data = request.data.copy()
+        data["user"] = request.user.id
 
-def url(request, username):
-    user = request.user.id
-    urls = URL.objects.filter(user=user)
+        serializer = URLSerializer(data=data)
+        if serializer.is_valid():
+            url_instance = serializer.save()
+            return Response({"success": "URL Generated Successfully","short_url":url_instance.short_url}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UrlGetView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        urls = URL.objects.filter(user=user).order_by('-created') 
+        serializer = URLSerializer(urls, many=True)
+
+        qr_codes_dir = os.path.join(settings.MEDIA_ROOT, "qr_codes")
+        
+        qr_filename = f"qr_{user.id}.png"
+        qr_path = os.path.join(qr_codes_dir, qr_filename)
+
+        qr_url = f"/media/qr_codes/{qr_filename}" if os.path.exists(qr_path) else None
+
+        return Response(
+            {"urls": serializer.data, "qr_code": qr_url},
+            status=status.HTTP_200_OK
+        )
     
-    qr_url = f"{settings.MEDIA_URL}qr_codes/qr_{user}.png"  # Path to saved QR
+class RedirectView(APIView):
+    permission_classes = [AllowAny]
 
-    return render(request, "url.html", {"urls": urls, "qr_url": qr_url})
-
-def redirect_to_original(request,short_url):
-    url = get_object_or_404(URL,short_url=short_url)
-    url.clicks += 1  
-    url.save(update_fields=['clicks'])
-    return redirect(url.original_url)
-
-@csrf_exempt
-def sample(request):
-    data = {"message": "Hello, this is a JSON response from Django!"}
-    if request.POST:
-        name = request.POST.get("name")
-        print(name)
-    return JsonResponse(data)
+    def get(self,request,short_url):
+        url = get_object_or_404(URL,short_url=short_url)
+        if url.status:
+            url.clicks += 1  
+            url.save(update_fields=['clicks'])
+            return Response({"success": True, "original_url": url.original_url}, status=status.HTTP_200_OK)
+        else:
+            return Response({"success": False, "message": "URL is inactive"}, status=status.HTTP_400_BAD_REQUEST)
