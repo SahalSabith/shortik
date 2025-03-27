@@ -10,7 +10,9 @@ dj-database-url==2.3.0
 Django==5.1.7
 django-cors-headers==4.7.0
 djangorestframework==3.15.2
+gunicorn==23.0.0
 kombu==5.5.1
+packaging==24.2
 pillow==11.1.0
 prompt_toolkit==3.0.50
 python-dateutil==2.9.0.post0
