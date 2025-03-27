@@ -62,15 +62,14 @@ npm install  # or yarn install
 npm run dev  # or yarn dev
 ```
 
-```markdown
-# API Endpoints
+## API Endpoints
 
-## Base URL
+### Base URL
 ```
 https://shortik.onrender.com
 ```
 
-## Endpoints
+### Endpoints
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
@@ -83,14 +82,12 @@ https://shortik.onrender.com
 | `/api/urls/` | GET | Retrieve all shortened URLs |
 | `/api/redirect/<short_url>/` | GET | Redirect to the original URL from a short URL |
 
-## Usage
-Each API endpoint should be prefixed with the base URL. For example, to login a user, send a POST request to:
+### Usage
+Each API endpoint should be prefixed with the base URL. For example, to log in a user, send a POST request to:
 ```
 https://shortik.onrender.com/api/login/
 ```
-
 Ensure you include the necessary request headers and payload for authentication and data handling.
-```
 
 ## Contributing
 Feel free to contribute by opening an issue or submitting a pull request.
