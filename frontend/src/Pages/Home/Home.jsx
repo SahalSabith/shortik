@@ -3,7 +3,7 @@ import Header from '../../components/Header/Header';
 import './Home.css';
 import { qrGenerator, urlShort } from '../../Redux/urlSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import Loading from '../../components/Loading/Loading';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
   const [activeTab, setActiveTab] = useState('shorten');
@@ -13,6 +13,7 @@ function Home() {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showCopyTooltip, setShowCopyTooltip] = useState(false);
+  const navigate = useNavigate()
 
   const dispatch = useDispatch();
 
@@ -23,7 +24,7 @@ function Home() {
 
   const urlPattern = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
 
-  useEffect(() => {
+  useEffect(() => {   
     if (qrCode) {
       setQrCodeUrl(`https://shortik.onrender.com${qrCode}`);
       setIsLoading(false);
@@ -50,9 +51,17 @@ function Home() {
     setIsLoading(true);
     
     if (type === 'shorten') {
-      dispatch(urlShort(currentUrl));
+      if (localStorage.getItem('token')) {
+        dispatch(urlShort(currentUrl));
+      } else {
+        navigate('/login')
+      }
     } else if (type === 'qr') {
-      dispatch(qrGenerator(currentUrl));
+      if (localStorage.getItem('token')) {
+        dispatch(qrGenerator(currentUrl));
+      } else {
+        navigate('/login')
+      }
     }
   };
 
