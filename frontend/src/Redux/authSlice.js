@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = "http://localhost:8000/api";
+const API_URL = "https://shortik.onrender.com/api";
 const storedUser = JSON.parse(localStorage.getItem("user"));
 
 export const register = createAsyncThunk(
@@ -54,8 +54,6 @@ const initialState = {
   username: storedUser?.username || null,
   email: storedUser?.email || null,
   token: localStorage.getItem("token") || null,
-  status: "idle",
-  error: null,
 };
 
 const authSlice = createSlice({
@@ -71,40 +69,19 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(register.pending, (state) => {
-        state.status = "loading";
-      })
       .addCase(register.fulfilled, (state, action) => {
-        state.status = "succeeded";
         state.token = action.payload.token;
         localStorage.setItem("token", action.payload.token);
-      })
-      .addCase(register.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      })
-      .addCase(login.pending, (state) => {
-        state.status = "loading";
       })
       .addCase(login.fulfilled, (state, action) => {
-        state.status = "succeeded";
         state.token = action.payload.token;
         localStorage.setItem("token", action.payload.token);
       })
-      .addCase(login.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      })
       .addCase(userDeatils.fulfilled, (state, action) => {
-        state.status = "succeeded";
         state.username = action.payload.username;
         state.email = action.payload.email;
         localStorage.setItem("user", JSON.stringify({ username: action.payload.username, email: action.payload.email }));
-      })      
-      .addCase(userDeatils.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      });
+      });   
   },
 });
 

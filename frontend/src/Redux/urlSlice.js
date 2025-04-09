@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = "http://localhost:8000/api";
+const API_URL = "https://shortik.onrender.com/api";
 
 export const qrGenerator = createAsyncThunk(
     "url/qrGenerator",
@@ -74,8 +74,6 @@ const initialState = {
     short_url:null,
     qrCodes : [],
     urls:[],
-    status: "idle", // "idle" | "loading" | "succeeded" | "failed"
-    error: null,
 };
 
 const urlSlice = createSlice({
@@ -85,43 +83,19 @@ const urlSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(qrGenerator.pending, (state) => {
-        state.status = "loading";
-      })
       .addCase(qrGenerator.fulfilled, (state, action) => {
-        state.status = "succeeded";
         state.qrCode = action.payload.qr_url;
       })
-      .addCase(qrGenerator.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      })
-      .addCase(urlShort.pending, (state) => {
-        state.status = "loading";
-      })
       .addCase(urlShort.fulfilled, (state, action) => {
-        state.status = "succeeded";
         state.short_url = action.payload.short_url;
       })
-      .addCase(urlShort.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      })
-      .addCase(fetchUrls.pending, (state) => {
-        state.status = "loading";
-      })
       .addCase(fetchUrls.fulfilled, (state, action) => {
-        state.status = "succeeded";
         const qrCodesArray = Array.isArray(action.payload.qr_code) 
             ? action.payload.qr_code 
             : [action.payload.qr_code];
     
         state.urls = [...state.urls, ...action.payload.urls];
         state.qrCodes = [...state.qrCodes, ...qrCodesArray];
-      })         
-      .addCase(fetchUrls.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
       });
   },
 });

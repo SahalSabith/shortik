@@ -12,7 +12,7 @@ const QRCodeCard = ({ qrCodeUrl = "/api/placeholder/200/200" }) => {
 
   const downloadQRCode = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000${qrCodeUrl}`);
+      const response = await fetch(`https://shortik.onrender.com${qrCodeUrl}`);
       const blob = await response.blob();
       
       const link = document.createElement('a');
@@ -46,7 +46,7 @@ const QRCodeCard = ({ qrCodeUrl = "/api/placeholder/200/200" }) => {
 
         <div className="text-center mb-3">
           <img
-            src={`http://127.0.0.1:8000${qrCodeUrl}`}
+            src={`https://shortik.onrender.com${qrCodeUrl}`}
             alt="QR Code"
             className="img-fluid rounded shadow-sm"
             style={{ maxWidth: '200px' }}

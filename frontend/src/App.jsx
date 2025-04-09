@@ -1,11 +1,11 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from './Pages/Home/Home'
-import Login from './Pages/Login/Login/Login'
-import Register from './Pages/Login/Register/register'
-import Profile from './Pages/Profile/Profile';
-import Redirect from './Pages/Redirect/Redirect';
-import Expired from './Pages/ErrorPages/Expired';
+import Login from './Pages/Login/Login/Login.jsx'
+import Register from './Pages/Login/Register/Register.jsx'
+import Profile from './Pages/Profile/Profile.jsx';
+import Redirect from './Pages/Redirect/Redirect.jsx';
+import Expired from './Pages/ErrorPages/Expired.jsx';
 import {PublicOnlyRoute,PrivateRoute} from './authorization'
 
 function App() {

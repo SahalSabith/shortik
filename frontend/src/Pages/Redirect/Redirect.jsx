@@ -10,7 +10,7 @@ function Redirect() {
     useEffect(() => {
         const fetchUrl = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/redirect/${shortUrl}/`);
+                const response = await axios.get(`https://shortik.onrender.com/api/redirect/${shortUrl}/`);
                 console.log(response.data);
 
                 if (response.data.success) {
