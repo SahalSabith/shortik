@@ -17,6 +17,14 @@ body {
     background-color: var(--background);
     color: var(--text);
     line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .navbar {
@@ -24,20 +32,24 @@ body {
     backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .hero-gradient {
     background: linear-gradient(135deg, 
         rgba(79, 70, 229, 0.1) 0%,
         rgba(236, 72, 153, 0.1) 100%);
-    min-height: 100vh;
+    flex: 1;
     display: flex;
     align-items: center;
+    padding: 2rem 0;
 }
 
 .hero-section {
-    padding-top: 5rem;
-    padding-bottom: 5rem;
+    width: 100%;
+    padding: 3rem 0;
 }
 
 .tool-card {
@@ -46,6 +58,7 @@ body {
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
                 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
 }
 
 .tool-card:hover {
@@ -54,16 +67,26 @@ body {
                 0 6px 8px -3px rgba(0, 0, 0, 0.07);
 }
 
+.nav-pills {
+    background-color: rgba(79, 70, 229, 0.05);
+    border-radius: 0.75rem;
+    padding: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
 .nav-pills .nav-link {
     color: var(--text-light);
     border-radius: 0.75rem;
     padding: 1rem 1.5rem;
+    font-weight: 500;
+    margin: 0 0.25rem;
 }
 
 .nav-pills .nav-link.active {
     background-color: var(--primary);
     color: white;
     font-weight: 600;
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
 }
 
 .form-control {
@@ -71,11 +94,17 @@ body {
     border-radius: 1rem;
     padding: 1rem 1.25rem;
     font-size: 1rem;
+    transition: all 0.3s ease;
 }
 
 .form-control:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+}
+
+.form-control:disabled {
+    background-color: #f8fafc;
+    opacity: 0.7;
 }
 
 .btn-primary {
@@ -84,36 +113,139 @@ body {
     border-radius: 1rem;
     padding: 1rem 2rem;
     font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .btn-primary:hover {
     background-color: var(--primary-dark);
     transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-primary:disabled {
+    background-color: var(--primary);
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-loading {
+    pointer-events: none;
+}
+
+.btn-outline-primary {
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    background-color: transparent;
+    border-radius: 1rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
+}
+
+.btn-outline-primary:active {
+    transform: translateY(0);
+}
+
+.btn-outline-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 .result-card {
     background: #f1f5f9;
     border-radius: 1rem;
     padding: 1.5rem;
-    animation: fadeIn 0.3s ease forwards;
+    animation: fadeIn 0.5s ease forwards;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.result-label {
+    font-weight: 600;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+}
+
+.copy-btn-wrapper {
+    position: relative;
 }
 
 .copy-btn {
     cursor: pointer;
     color: var(--text-light);
+    background: #e2e8f0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
 }
 
 .copy-btn:hover {
     color: var(--primary);
+    background: #cbd5e1;
+}
+
+.copy-tooltip {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    background-color: var(--primary);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+    white-space: nowrap;
+    animation: fadeInOut 2s ease;
+}
+
+.copy-tooltip:after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 12px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--primary) transparent transparent transparent;
 }
 
 .qr-preview {
-    max-width: 250px;
+    max-width: 200px;
     margin: 1.5rem auto;
     padding: 1rem;
     background: white;
     border-radius: 1rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-loading-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 @keyframes fadeIn {
@@ -127,13 +259,95 @@ body {
     }
 }
 
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.6; }
+}
+
+/* Spinner styles */
+.spinner-border {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    vertical-align: text-bottom;
+    border: 0.2em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border 0.75s linear infinite;
+}
+
+@keyframes spinner-border {
+    to { transform: rotate(360deg); }
+}
+
 /* Responsive adjustments */
 @media (max-width: 992px) {
     .hero-section {
         text-align: center;
+        padding: 2rem 0;
     }
     
     .hero-section .col-lg-6:first-child {
-        margin-bottom: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .tool-card {
+        max-width: 550px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 1rem 0;
+    }
+    
+    .nav-pills .nav-link {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-section .lead {
+        font-size: 1rem;
+    }
+    
+    .tool-card {
+        padding: 1.25rem !important;
+    }
+    
+    .btn-primary, .btn-outline-primary {
+        padding: 0.75rem 1.25rem;
+    }
+    
+    .form-control {
+        padding: 0.75rem 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .tool-card {
+        padding: 1rem !important;
+    }
+    
+    .nav-pills .nav-link {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .qr-preview {
+        max-width: 150px;
+        height: 150px;
     }
 }

@@ -1,0 +1,63 @@
+/* Login.css */
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
+  
+  .hero-gradient {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  }
+  
+  .tool-card {
+    border-radius: 1rem;
+    background-color: #ffffff;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+  }
+  
+  .tool-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+  }
+  
+  .form-floating > .form-control {
+    padding: 1rem 0.75rem;
+  }
+  
+  .btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+    transform: translateY(-2px);
+  }
+  
+  .btn-primary:disabled {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    opacity: 0.65;
+  }
+  
+  .invalid-feedback {
+    font-size: 0.875rem;
+    color: #dc3545;
+    text-align: left;
+  }
+  
+  .alert {
+    border-radius: 0.5rem;
+  }
+  
+  /* Animation for spinner */
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .spinner-border {
+    animation: spin 0.75s linear infinite;
+  }

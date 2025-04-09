@@ -1,31 +1,117 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { login } from '../../../Redux/authSlice';
-import { useNavigate } from 'react-router-dom';
+import './Login.css'; // Assuming you have a separate CSS file
 
 function Login() {
   const dispatch = useDispatch();
   const { status, error } = useSelector((state) => state.auth);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  
   const [formData, setFormData] = useState({
     username: '',
     password: ''
   });
+  
+  const [formErrors, setFormErrors] = useState({
+    username: '',
+    password: ''
+  });
 
-  const handleChange = (e) => {
-    const { id, value, type, checked } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [id]: type === 'checkbox' ? checked : value
-    }));
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
+
+  // Reset navigation after successful login
+  useEffect(() => {
+    if (status === 'succeeded') {
+      navigate('/');
+    }
+  }, [status, navigate]);
+
+  const validateForm = () => {
+    let isValid = true;
+    const errors = {
+      username: '',
+      password: ''
+    };
+
+    // Username validation
+    if (!formData.username.trim()) {
+      errors.username = 'Username is required';
+      isValid = false;
+    } else if (formData.username.length < 3) {
+      errors.username = 'Username must be at least 3 characters';
+      isValid = false;
+    }
+
+    // Password validation
+    if (!formData.password) {
+      errors.password = 'Password is required';
+      isValid = false;
+    } else if (formData.password.length < 6) {
+      errors.password = 'Password must be at least 6 characters';
+      isValid = false;
+    }
+
+    setFormErrors(errors);
+    return isValid;
   };
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [id]: value
+    }));
+    
+    // Clear the specific error when user starts typing
+    if (formErrors[id]) {
+      setFormErrors({
+        ...formErrors,
+        [id]: ''
+      });
+    }
+    
+    // Clear API error when user modifies form
+    if (apiError) {
+      setApiError('');
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(login(formData))
-    navigate('/')
-    console.log('Login submitted', formData);
+    
+    // Clear previous API error
+    setApiError('');
+    
+    if (validateForm()) {
+      setIsLoading(true);
+      
+      try {
+        const resultAction = await dispatch(login(formData));
+        
+        if (login.fulfilled.match(resultAction)) {
+          // Success - navigation handled by useEffect
+        } else if (login.rejected.match(resultAction)) {
+          // Handle specific API errors
+          const errorData = resultAction.payload;
+          if (typeof errorData === 'object') {
+            // Format error messages from API
+            const errorMessages = Object.entries(errorData)
+              .map(([key, value]) => `${key}: ${value}`)
+              .join('. ');
+            setApiError(errorMessages);
+          } else {
+            setApiError(errorData || 'Login failed. Please try again.');
+          }
+        }
+      } catch (err) {
+        setApiError('An unexpected error occurred. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   return (
@@ -40,34 +126,64 @@ function Login() {
               </div>
               <h4 className="mb-4 text-muted">Sign In</h4>
 
+              {/* API Error Alert */}
+              {apiError && (
+                <div className="alert alert-danger mb-4" role="alert">
+                  {apiError}
+                </div>
+              )}
+
               {/* Form Start */}
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} noValidate>
                 <div className="mb-4">
-                  <input
-                    type="username"
-                    id="username"
-                    className="form-control"
-                    placeholder="Enter your Username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    required
-                  />
+                  <div className="form-floating">
+                    <input
+                      type="text"
+                      id="username"
+                      className={`form-control ${formErrors.username ? 'is-invalid' : ''}`}
+                      placeholder="Enter your Username"
+                      value={formData.username}
+                      onChange={handleChange}
+                      disabled={isLoading}
+                    />
+                    <label htmlFor="username">Username</label>
+                    {formErrors.username && (
+                      <div className="invalid-feedback text-start">{formErrors.username}</div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="mb-4">
-                  <input
-                    type="password"
-                    id="password"
-                    className="form-control"
-                    placeholder="Enter your password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                  />
+                  <div className="form-floating">
+                    <input
+                      type="password"
+                      id="password"
+                      className={`form-control ${formErrors.password ? 'is-invalid' : ''}`}
+                      placeholder="Enter your password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      disabled={isLoading}
+                    />
+                    <label htmlFor="password">Password</label>
+                    {formErrors.password && (
+                      <div className="invalid-feedback text-start">{formErrors.password}</div>
+                    )}
+                  </div>
                 </div>
 
-                <button className="btn btn-primary btn-lg w-100 mb-4" type="submit">
-                  Sign In
+                <button 
+                  className="btn btn-primary btn-lg w-100 mb-4" 
+                  type="submit"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Signing In...
+                    </>
+                  ) : (
+                    'Sign In'
+                  )}
                 </button>
 
                 <p className="mb-0">
@@ -77,7 +193,6 @@ function Login() {
                   </Link>
                 </p>
               </form>
-
             </div>
           </div>
         </div>
